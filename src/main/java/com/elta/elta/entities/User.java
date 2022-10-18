@@ -2,11 +2,15 @@ package com.elta.elta.entities;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -14,13 +18,13 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "users", schema = "prime")
-public class Users {
+public class User {
 
     @Id
-    @SequenceGenerator(name = "users_sequence", sequenceName = "users_sequence", allocationSize = 1)
+    @SequenceGenerator(name = "users_sequence", sequenceName = "users_sequence", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_sequence")
     @Column(name="user_id", updatable = false)
-    Long user_id;
+    Long userId;
     
     @Column(name="username", nullable = false, unique = true)
     String username;
@@ -37,35 +41,50 @@ public class Users {
     @Column(name="title", nullable = false)
     String title;
     
-    @Column(name="created_on", nullable = false, updatable = false)
+    @Column(name="created_on", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     Date createdOn;
     
-    @Column(name="last_modified_on", nullable = false)
+    @Column(name="last_modified_on")
     @Temporal(TemporalType.TIMESTAMP)
-    Date LastModifiedOn;
+    Date lastModifiedOn;
     
-    public Users() {}
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name="mgr_id")
+    User manager;
+    
+    public User() {}
+    
+	public User(Long userId, String username, String fname, String lname, String email, String title, User manager) {
+		this.userId = userId;
+		this.username = username;
+		this.fname = fname;
+		this.lname = lname;
+		this.email = email;
+		this.title = title;
+		this.manager = manager;
+		this.lastModifiedOn = new Date(System.currentTimeMillis());
+	}
 
-	public Users(Long user_id, String username, String fname, String lname, String email, String title, Date createdOn,
-			Date lastModifiedOn) {
-		super();
-		this.user_id = user_id;
+	public User(Long userId, String username, String fname, String lname, String email, String title, Date createdOn,
+			Date lastModifiedOn, User manager) {
+		this.userId = userId;
 		this.username = username;
 		this.fname = fname;
 		this.lname = lname;
 		this.email = email;
 		this.title = title;
 		this.createdOn = createdOn;
-		LastModifiedOn = lastModifiedOn;
+		this.lastModifiedOn = lastModifiedOn;
+		this.manager = manager;
+	}
+	
+	public Long getUserId() {
+		return userId;
 	}
 
-	public Long getUser_id() {
-		return user_id;
-	}
-
-	public void setUser_id(Long user_id) {
-		this.user_id = user_id;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getUsername() {
@@ -117,12 +136,19 @@ public class Users {
 	}
 
 	public Date getLastModifiedOn() {
-		return LastModifiedOn;
+		return lastModifiedOn;
 	}
 
 	public void setLastModifiedOn(Date lastModifiedOn) {
-		LastModifiedOn = lastModifiedOn;
+		this.lastModifiedOn = lastModifiedOn;
 	}
 
-	
+	public User getManager() {
+		return manager;
+	}
+
+	public void setManager(User manager) {
+		this.manager = manager;
+	}
+
 }

@@ -2,10 +2,16 @@ package com.elta.elta.services;
 
 import java.util.List;
 
-import com.elta.elta.entities.Users;
+import com.elta.elta.entities.User;
 
 public interface UserService {
 	
-	List<Users> getUsers();
+	List<User> getUsers();
+
+	void createUser(User user);
+
+	void updateUser(User user);
+
+	void deleteUser(Long userId);
 
 }
