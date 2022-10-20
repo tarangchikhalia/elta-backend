@@ -1,90 +1,118 @@
 package com.elta.elta.entities;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.elta.elta.representations.UserRepresentation;
+
 @Entity
-@Table(name = "users", schema = "prime")
+@Table(name = "users", schema = "public")
 public class User {
 
     @Id
     @SequenceGenerator(name = "users_sequence", sequenceName = "users_sequence", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_sequence")
-    @Column(name="user_id", updatable = false)
-    Long userId;
+    @Column(name="id", updatable = false)
+    private Integer id;
+    
+    @Column(name="first_name", nullable = false)
+    private String firstName;
+    
+    @Column(name="last_name", nullable = false)
+    private String lastName;
     
     @Column(name="username", nullable = false, unique = true)
-    String username;
+    private String username;
     
-    @Column(name="fname", nullable = false)
-    String fname;
-    
-    @Column(name="lname", nullable = false)
-    String lname;
-    
-    @Column(name="email", nullable = false, unique = true)
-    String email;
+    @Column(name="user_id", nullable = false, unique = true)
+    private String userId;
     
     @Column(name="title", nullable = false)
-    String title;
+    private String title;
     
     @Column(name="created_on", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    Date createdOn;
+    private Date createdOn;
     
     @Column(name="last_modified_on")
     @Temporal(TemporalType.TIMESTAMP)
-    Date lastModifiedOn;
+    private Date lastModifiedOn;
     
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name="mgr_id")
-    User manager;
+    @ManyToOne
+    @JoinColumn(name="reports_to")
+    private User reportTo;
+    
+    @OneToMany(mappedBy="reportTo")
+    private Set<User> reportee = new HashSet<>();
     
     public User() {}
-    
-	public User(Long userId, String username, String fname, String lname, String email, String title, User manager) {
-		this.userId = userId;
-		this.username = username;
-		this.fname = fname;
-		this.lname = lname;
-		this.email = email;
-		this.title = title;
-		this.manager = manager;
-		this.lastModifiedOn = new Date(System.currentTimeMillis());
-	}
 
-	public User(Long userId, String username, String fname, String lname, String email, String title, Date createdOn,
-			Date lastModifiedOn, User manager) {
-		this.userId = userId;
+	public User(Integer id, String firstName, String lastName, String username, String userId, String email,
+			String title, Date createdOn, Date lastModifiedOn) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.username = username;
-		this.fname = fname;
-		this.lname = lname;
-		this.email = email;
+		this.userId = userId;
 		this.title = title;
 		this.createdOn = createdOn;
 		this.lastModifiedOn = lastModifiedOn;
-		this.manager = manager;
 	}
 	
-	public Long getUserId() {
-		return userId;
+	public User(UserRepresentation userRepresentation) {
+		if (userRepresentation.getId() != null) {
+			this.id = userRepresentation.getId();
+		}
+		this.firstName = userRepresentation.getFirstName();
+		this.lastName = userRepresentation.getLastName();
+		this.username = userRepresentation.getUsername();
+		this.userId = userRepresentation.getUserId();
+		this.title = userRepresentation.getTitle();
+		if (userRepresentation.getCreatedOn() != null) {
+			this.createdOn = userRepresentation.getCreatedOn();	
+		}
+		if (userRepresentation.getLastModifiedOn() != null) {
+			this.createdOn = userRepresentation.getLastModifiedOn();	
+		}
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getUsername() {
@@ -95,28 +123,12 @@ public class User {
 		this.username = username;
 	}
 
-	public String getFname() {
-		return fname;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setFname(String fname) {
-		this.fname = fname;
-	}
-
-	public String getLname() {
-		return lname;
-	}
-
-	public void setLname(String lname) {
-		this.lname = lname;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getTitle() {
@@ -143,12 +155,25 @@ public class User {
 		this.lastModifiedOn = lastModifiedOn;
 	}
 
-	public User getManager() {
-		return manager;
+	public User getReportTo() {
+		return reportTo;
 	}
 
-	public void setManager(User manager) {
-		this.manager = manager;
+	public void setReportTo(User reportTo) {
+		this.reportTo = reportTo;
 	}
 
+	public Set<User> getReportee() {
+		return reportee;
+	}
+
+	public void setReportee(Set<User> reportee) {
+		this.reportee = reportee;
+	}
+
+	@Override
+	public String toString() {
+		return firstName + " " + lastName + ": " + userId;
+	}
+	
 }

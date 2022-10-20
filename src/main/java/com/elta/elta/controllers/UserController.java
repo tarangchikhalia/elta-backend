@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.elta.elta.entities.User;
+import com.elta.elta.representations.UserRepresentation;
 import com.elta.elta.services.UserService;
 
 @RestController
@@ -28,23 +28,28 @@ public class UserController {
 	}
 
 	@GetMapping
-	public List<User> getUsers() {
-		System.out.println(userService.getUsers());
+	public List<UserRepresentation> getUsers() {
 		return userService.getUsers();
 	}
 	
 	@PostMapping()
-	public void createUser(@RequestBody User user) {
-		userService.createUser(user);
+	public void createUser(@RequestBody UserRepresentation user) {
+		try {
+			userService.createUser(user);	
+		}
+		catch (Exception e) {
+			System.out.println("Error while creating new user");
+		}
+		
 	}
 	
 	@PutMapping()
-	public void updateUser(@RequestBody User user) {
+	public void updateUser(@RequestBody UserRepresentation user) {
 		userService.updateUser(user);
 	}
 	
 	@DeleteMapping("/{userId}")
-	public void deleteUser(@PathVariable Long userId) {
+	public void deleteUser(@PathVariable Integer userId) {
 		userService.deleteUser(userId);
 	}
 }

@@ -2,16 +2,16 @@ package com.elta.elta.services;
 
 import java.util.List;
 
-import com.elta.elta.entities.User;
+import com.elta.elta.representations.UserRepresentation;
 
 public interface UserService {
 	
-	List<User> getUsers();
+	List<UserRepresentation> getUsers();
 
-	void createUser(User user);
+	void createUser(UserRepresentation user) throws Exception;
 
-	void updateUser(User user);
+	void updateUser(UserRepresentation user);
 
-	void deleteUser(Long userId);
+	void deleteUser(Integer id);
 
 }

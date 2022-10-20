@@ -10,5 +10,9 @@ import com.elta.elta.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Optional<User> findByUserId(Long userId);
+	Optional<User> findById(Integer id);
+	
+	Optional<User> findByUserId(String userId);
+
+	void deleteById(Integer id);
 }
