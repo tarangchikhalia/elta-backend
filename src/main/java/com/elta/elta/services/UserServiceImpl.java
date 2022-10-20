@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.elta.elta.entities.Email;
 import com.elta.elta.entities.User;
+import com.elta.elta.repositories.EmailRepository;
 import com.elta.elta.repositories.UserRepository;
+import com.elta.elta.representations.EmailRepresentation;
 import com.elta.elta.representations.UserRepresentation;
 
 @Service
@@ -19,11 +22,13 @@ import com.elta.elta.representations.UserRepresentation;
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
+	private EmailRepository emailRepository;
 	
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository) {
+	public UserServiceImpl(UserRepository userRepository, EmailRepository emailRepository) {
 		super();
 		this.userRepository = userRepository;
+		this.emailRepository = emailRepository;
 	}
 
 	@Override
@@ -43,6 +48,10 @@ public class UserServiceImpl implements UserService {
 		newUser.setCreatedOn(currentDate);
 		newUser.setLastModifiedOn(currentDate);
 		newUser.setReportTo(userRepository.findById(userRepresentation.getReportToId()).orElse(null));
+		
+		if (!userRepresentation.getEmails().isEmpty()) {
+			addEmails(userRepresentation);
+		}
 		userRepository.save(newUser);
 	}
 
@@ -55,6 +64,9 @@ public class UserServiceImpl implements UserService {
 		User newUser = new User(userRepresentation);
 		newUser.setLastModifiedOn(new Date(System.currentTimeMillis()));
 		newUser.setReportTo(userRepository.findById(userRepresentation.getReportToId()).orElse(null));
+		if (!userRepresentation.getEmails().isEmpty()) {
+			addEmails(userRepresentation);
+		}
 		userRepository.save(newUser);
 	}
 
@@ -65,6 +77,17 @@ public class UserServiceImpl implements UserService {
 			throw new EntityNotFoundException();
 		}
 		userRepository.deleteById(id);
+	}
+	
+	private void addEmails(UserRepresentation userRepresentation) {
+		for (EmailRepresentation emailRepresentation : userRepresentation.getEmails() ) {
+			Email email = new Email(emailRepresentation);
+			Optional<User> existingUser = userRepository.findByUserId(userRepresentation.getUserId());
+			if (existingUser.isPresent()) {
+				email.setUser(existingUser.get());
+				emailRepository.save(email);
+			}
+		}
 	}
 
 }

@@ -1,7 +1,11 @@
 package com.elta.elta.representations;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.elta.elta.entities.Email;
 import com.elta.elta.entities.User;
 
 public class UserRepresentation {
@@ -16,24 +20,10 @@ public class UserRepresentation {
 	private Date lastModifiedOn;
 	private Integer reportToId;
 	private String reportToName;
+	private Set<EmailRepresentation> emails = new HashSet<>();
 	
 	public UserRepresentation() {
 		
-	}
-
-	public UserRepresentation(Integer id, String firstName, String lastName, String username, String userId,
-			String title, Date createdOn, Date lastModifiedOn, Integer reportToId, String reportToName) {
-		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.username = username;
-		this.userId = userId;
-		this.title = title;
-		this.createdOn = createdOn;
-		this.lastModifiedOn = lastModifiedOn;
-		this.reportToId = reportToId;
-		this.reportToName = reportToName;
 	}
 	
 	public UserRepresentation(User user) {
@@ -50,7 +40,7 @@ public class UserRepresentation {
 				this.reportToId = user.getReportTo().getId();
 				this.reportToName = user.getReportTo().toString();
 			}
-			
+			this.emails = user.getEmails().stream().map(email -> new EmailRepresentation(email)).collect(Collectors.toSet());
 		}
 	}
 
@@ -132,6 +122,14 @@ public class UserRepresentation {
 
 	public void setReportToName(String reportToName) {
 		this.reportToName = reportToName;
+	}
+
+	public Set<EmailRepresentation> getEmails() {
+		return emails;
+	}
+
+	public void setEmails(Set<EmailRepresentation> emails) {
+		this.emails = emails;
 	}
 
 	

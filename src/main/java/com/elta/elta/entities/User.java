@@ -59,20 +59,10 @@ public class User {
     @OneToMany(mappedBy="reportTo")
     private Set<User> reportee = new HashSet<>();
     
+    @OneToMany(mappedBy="user")
+    private Set<Email> emails = new HashSet<>();
+    
     public User() {}
-
-	public User(Integer id, String firstName, String lastName, String username, String userId, String email,
-			String title, Date createdOn, Date lastModifiedOn) {
-		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.username = username;
-		this.userId = userId;
-		this.title = title;
-		this.createdOn = createdOn;
-		this.lastModifiedOn = lastModifiedOn;
-	}
 	
 	public User(UserRepresentation userRepresentation) {
 		if (userRepresentation.getId() != null) {
@@ -169,6 +159,15 @@ public class User {
 
 	public void setReportee(Set<User> reportee) {
 		this.reportee = reportee;
+	}
+	
+
+	public Set<Email> getEmails() {
+		return emails;
+	}
+
+	public void setEmails(Set<Email> emails) {
+		this.emails = emails;
 	}
 
 	@Override

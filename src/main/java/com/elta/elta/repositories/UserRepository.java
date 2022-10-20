@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.elta.elta.entities.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
 	Optional<User> findById(Integer id);
 	

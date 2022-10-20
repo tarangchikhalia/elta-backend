@@ -26,11 +26,15 @@ public class UserController {
 		super();
 		this.userService = userService;
 	}
+	
+	///// GET ///// 
 
 	@GetMapping
 	public List<UserRepresentation> getUsers() {
 		return userService.getUsers();
 	}
+	
+	///// UPDATE /////
 	
 	@PostMapping()
 	public void createUser(@RequestBody UserRepresentation user) {
@@ -40,13 +44,16 @@ public class UserController {
 		catch (Exception e) {
 			System.out.println("Error while creating new user");
 		}
-		
 	}
+	
+	///// PUT /////
 	
 	@PutMapping()
 	public void updateUser(@RequestBody UserRepresentation user) {
 		userService.updateUser(user);
 	}
+	
+	///// DELETE /////
 	
 	@DeleteMapping("/{userId}")
 	public void deleteUser(@PathVariable Integer userId) {
